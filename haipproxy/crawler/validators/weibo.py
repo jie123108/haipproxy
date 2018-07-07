@@ -1,3 +1,5 @@
+# coding=utf8
+
 """
 We use this validator to filter ip that can access mobile weibo website.
 """

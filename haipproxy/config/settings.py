@@ -59,8 +59,8 @@ LOG_LEVEL = 'DEBUG'
 # if some value is empty, set like this: key = ''
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
-REDIS_PASSWORD = '123456'
-REDIS_DB = 0
+REDIS_PASSWORD = ''
+REDIS_DB = 3
 
 # scheduler settings
 TIMER_RECORDER = 'haipproxy:scheduler:task'
@@ -116,9 +116,14 @@ SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
 # squid settings on linux os
 # execute sudo chown -R $USER /etc/squid/ and
 # sudo chown -R $USER /var/log/squid/cache.log at first
-SQUID_BIN_PATH = '/usr/sbin/squid'  # mac os '/usr/local/sbin/squid'
-SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
-SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
+#SQUID_BIN_PATH = '/usr/sbin/squid'  # mac os '/usr/local/sbin/squid'
+#SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
+#SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
+
+# squid settings on macos 
+SQUID_BIN_PATH = '/usr/local/opt/squid/sbin/squid'  # mac os '/usr/local/sbin/squid'
+SQUID_CONF_PATH = '/usr/local/etc/squid.conf'  # mac os '/usr/local/etc/squid.conf'
+SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
 
 # client settings
 

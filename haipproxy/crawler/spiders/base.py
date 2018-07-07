@@ -1,3 +1,5 @@
+# coding=utf8
+
 """
 Useful base class for all spiders.
 """
