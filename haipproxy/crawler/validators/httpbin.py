@@ -13,11 +13,7 @@ from haipproxy.config.rules import (
     SCORE_MAPS, HTTP_TASKS,
     HTTPS_TASKS)
 from haipproxy.config.settings import (
-    INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
-    TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
-    VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-    TTL_HTTPS_QUEUE, SPEED_HTTP_QUEUE,
-    SPEED_HTTPS_QUEUE, ORIGIN_IP)
+    INIT_HTTP_QUEUE, ORIGIN_IP, QUEUE)
 from ..redis_spiders import ValidatorRedisSpider
 from ..items import (
     ProxyScoreItem, ProxyVerifiedTimeItem,
@@ -86,10 +82,10 @@ class HttpValidator(BaseValidator, ValidatorRedisSpider):
     urls = [
         'http://httpbin.org/ip',
     ]
-    task_queue = TEMP_HTTP_QUEUE
-    score_queue = VALIDATED_HTTP_QUEUE
-    ttl_queue = TTL_HTTP_QUEUE
-    speed_queue = SPEED_HTTP_QUEUE
+    task_queue = QUEUE('temp', name)
+    score_queue =  QUEUE('validated', name)
+    ttl_queue = QUEUE('ttl', name)
+    speed_queue = QUEUE('speed', name)
 
 
 class HttpsValidator(BaseValidator, ValidatorRedisSpider):
@@ -98,7 +94,7 @@ class HttpsValidator(BaseValidator, ValidatorRedisSpider):
     urls = [
         'https://httpbin.org/ip',
     ]
-    task_queue = TEMP_HTTPS_QUEUE
-    score_queue = VALIDATED_HTTPS_QUEUE
-    ttl_queue = TTL_HTTPS_QUEUE
-    speed_queue = SPEED_HTTPS_QUEUE
+    task_queue = QUEUE('temp', name)
+    score_queue =  QUEUE('validated', name)
+    ttl_queue = QUEUE('ttl', name)
+    speed_queue = QUEUE('speed', name)

@@ -5,15 +5,8 @@ spiders will parse response content according to the rules.
 from ..config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
-    VALIDATED_HTTPS_QUEUE, TEMP_HTTP_QUEUE,
-    TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-    TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE,
-    SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
-    VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE,
-    SPEED_WEIBO_QUEUE, TEMP_ZHIHU_QUEUE,
-    VALIDATED_ZHIHU_QUEUE, TTL_ZHIHU_QUEUE,
-    SPEED_ZHIHU_QUEUE)
+    INIT_HTTP_QUEUE, 
+    QUEUE, VALIDATOR_NAMES)
 
 
 __all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
@@ -135,28 +128,28 @@ CRAWLER_TASKS = [
         'interval': 2 * 60,
         'enable': 1,
     },
-    {
-        'name': 'nianshao.me',
-        'resource': ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
-                    ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
-                    ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1  # it seems the website is down
-    },
+    # {
+    #     'name': 'nianshao.me',
+    #     'resource': ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
+    #                 ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
+    #                 ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
+    #     'task_queue': SPIDER_COMMON_TASK,
+    #     'parse_type': 'common',
+    #     'parse_rule': {
+    #         'pre_extract_method': 'xpath',
+    #         'pre_extract': '//tr',
+    #         'infos_pos': 1,
+    #         'infos_end': None,
+    #         'detail_rule': 'td::text',
+    #         'ip_pos': 0,
+    #         'port_pos': 1,
+    #         'extract_protocol': True,
+    #         'split_detail': False,
+    #         'protocols': None
+    #     },
+    #     'interval': 60,
+    #     'enable': 1  # it seems the website is down
+    # },
     {
         'name': '66ip.cn',
         'resource': ['http://www.66ip.cn/%s.html' % i for i in range(1, 3)] +
@@ -735,73 +728,36 @@ CRAWLER_TASK_MAPS = {
 }
 
 # validator scheduler will fetch tasks from resource queue and store into task queue
-VALIDATOR_TASKS = [
-    {
-        'name': 'http',
-        'task_queue': TEMP_HTTP_QUEUE,
-        'resource': VALIDATED_HTTP_QUEUE,
-        'interval': 5,  # 20 minutes
-        'enable': 1,
-    },
-    {
-        'name': 'https',
-        'task_queue': TEMP_HTTPS_QUEUE,
-        'resource': VALIDATED_HTTPS_QUEUE,
-        'interval': 5,
-        'enable': 1,
-    },
-    {
-        'name': 'weibo',
-        'task_queue': TEMP_WEIBO_QUEUE,
-        'resource': VALIDATED_WEIBO_QUEUE,
-        'interval': 5,
-        'enable': 1,
-    },
-    {
-        'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
-        'interval': 5,
-        'enable': 1,
-    },
-]
-
+VALIDATOR_TASKS = []
 # validators will fetch proxies from the following queues
-TEMP_TASK_MAPS = {
-    'init': INIT_HTTP_QUEUE,
-    'http': TEMP_HTTP_QUEUE,
-    'https': TEMP_HTTPS_QUEUE,
-    'weibo': TEMP_WEIBO_QUEUE,
-    'zhihu': TEMP_ZHIHU_QUEUE
-}
-
-# target website that use http protocol
-HTTP_TASKS = ['http']
-
-# target website that use https protocol
-HTTPS_TASKS = ['https', 'zhihu', 'weibo']
-
+TEMP_TASK_MAPS = {'init': INIT_HTTP_QUEUE}
 # todo the three maps may be combined in one map
 # validator scheduler and clients will fetch proxies from the following queues
-SCORE_MAPS = {
-    'http': VALIDATED_HTTP_QUEUE,
-    'https': VALIDATED_HTTPS_QUEUE,
-    'weibo': VALIDATED_WEIBO_QUEUE,
-    'zhihu': VALIDATED_ZHIHU_QUEUE
-}
-
+SCORE_MAPS = {}
 # validator scheduler and clients will fetch proxies from the following queues which are verified recently
-TTL_MAPS = {
-    'http': TTL_HTTP_QUEUE,
-    'https': TTL_HTTPS_QUEUE,
-    'weibo': TTL_WEIBO_QUEUE,
-    'zhihu': TTL_ZHIHU_QUEUE
-}
+TTL_MAPS = {}
 
-SPEED_MAPS = {
-    'http': SPEED_HTTP_QUEUE,
-    'https': SPEED_HTTPS_QUEUE,
-    'weibo': SPEED_WEIBO_QUEUE,
-    'zhihu': SPEED_ZHIHU_QUEUE
-}
+SPEED_MAPS = {}
 
+# target website that use http protocol
+HTTP_TASKS = []
+# target website that use https protocol
+HTTPS_TASKS = []
+
+for name in VALIDATOR_NAMES.keys():
+    task = {
+        'name': name, 
+        'task_queue': QUEUE('temp', name), 
+        'resource': QUEUE('validated', name),
+        'interval': 5, 
+        'enable': VALIDATOR_NAMES[name],
+    }
+    VALIDATOR_TASKS.append(task)
+    TEMP_TASK_MAPS[name] = QUEUE('temp', name)
+    SCORE_MAPS[name] = QUEUE('validated', name)
+    TTL_MAPS[name] = QUEUE('ttl', name)
+    SPEED_MAPS[name] = QUEUE('speed', name)
+    if name == 'http':
+        HTTP_TASKS.append(name)
+    else:
+        HTTPS_TASKS.append(name)

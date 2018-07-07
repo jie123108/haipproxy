@@ -88,42 +88,61 @@ INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
 # custom validator settings
 VALIDATOR_FEED_SIZE = 50
 
+# key=name, value=enable[0|1]
+VALIDATOR_NAMES = {
+    "http": 1, 
+    "https": 1, 
+    "weibo": 0, 
+    "zhihu": 0,
+    "douban": 1,
+}
+
+QUEUE_TYPES = ["temp", "validated", "ttl", "speed"]
+
+def QUEUE(TYPE, NAME):
+    assert TYPE in QUEUE_TYPES
+    assert NAME in VALIDATOR_NAMES
+    return "haipproxy:%s:%s" % (TYPE, NAME)
+
 # they are temp sets, come from init queue, in order to filter transparnt ip
-TEMP_HTTP_QUEUE = 'haipproxy:http:temp'
-TEMP_HTTPS_QUEUE = 'haipproxy:https:temp'
-TEMP_WEIBO_QUEUE = 'haipproxy:weibo:temp'
-TEMP_ZHIHU_QUEUE = 'haipproxy:zhihu:temp'
+# TEMP_HTTP_QUEUE = 'haipproxy:temp:http'
+# TEMP_HTTPS_QUEUE = 'haipproxy:temp:https'
+# TEMP_WEIBO_QUEUE = 'haipproxy:temp:weibo'
+# TEMP_ZHIHU_QUEUE = 'haipproxy:temp:zhihu'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
-VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
-VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
-VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
-VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
+# VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
+# VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
+# VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
+# VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
 
 # time to live of proxy ip resources
 TTL_VALIDATED_RESOURCE = 2  # minutes
-TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
-TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
-TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
-TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
+# TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
+# TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
+# TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
+# TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
 
 # queue for proxy speed
-SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
-SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
-SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
-SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
+# SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
+# SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
+# SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
+# SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
 
-# squid settings on linux os
-# execute sudo chown -R $USER /etc/squid/ and
-# sudo chown -R $USER /var/log/squid/cache.log at first
-#SQUID_BIN_PATH = '/usr/sbin/squid'  # mac os '/usr/local/sbin/squid'
-#SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
-#SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
+import platform 
 
-# squid settings on macos 
-SQUID_BIN_PATH = '/usr/local/opt/squid/sbin/squid'  # mac os '/usr/local/sbin/squid'
-SQUID_CONF_PATH = '/usr/local/etc/squid.conf'  # mac os '/usr/local/etc/squid.conf'
-SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
+if platform.system() == 'Darwin':
+    # squid settings on macos 
+    SQUID_BIN_PATH = '/usr/local/opt/squid/sbin/squid'  # mac os 
+    SQUID_CONF_PATH = '/usr/local/etc/squid.conf'  # mac os 
+    SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'  # mac os 
+else:
+    # squid settings on linux os
+    # execute sudo chown -R $USER /etc/squid/ and
+    # sudo chown -R $USER /var/log/squid/cache.log at first
+    SQUID_BIN_PATH = '/usr/sbin/squid'  # mac os '/usr/local/sbin/squid'
+    SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
+    SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
 
 # client settings
 

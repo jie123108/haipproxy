@@ -7,14 +7,14 @@ from ..redis_spiders import ValidatorRedisSpider
 from .base import BaseValidator
 
 
-class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator checks the liveness of zhihu proxy resources"""
-    name = 'zhihu'
+class DoubanValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator checks the liveness of douban proxy resources"""
+    name = 'douban'
     urls = [
-        'https://www.zhihu.com/question/47464143'
+        'https://movie.douban.com/subject/26752088/'
     ]
     task_queue = QUEUE('temp', name)
     score_queue =  QUEUE('validated', name)
     ttl_queue = QUEUE('ttl', name)
     speed_queue = QUEUE('speed', name)
-    success_key = '安全验证'
+    success_key = '我不是药神'

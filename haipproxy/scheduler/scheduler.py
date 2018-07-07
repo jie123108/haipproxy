@@ -23,7 +23,7 @@ from ..crawler.validators import all_validators
 from ..config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
+    QUEUE,
     TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
 from ..utils import (
     get_redis_conn, acquire_lock,
@@ -33,7 +33,7 @@ from ..utils import (
 DEFAULT_CRAWLER_TASKS = [
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
-DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
+DEFAULT_VALIDATORS_TASKS = [QUEUE('temp', 'http'), QUEUE('temp', 'https')]
 
 DEFAULT_CRAWLERS = all_spiders
 DEFAULT_VALIDATORS = all_validators
